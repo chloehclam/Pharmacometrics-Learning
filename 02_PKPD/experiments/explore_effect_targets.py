@@ -42,8 +42,8 @@ curve_df = simulate_emax_curve(
 
 plot_effect_concentration(
     curve_df,
-    title="Emax Effect-Concentration Profile",
-    filename=str(FIGURES_DIR / "effect_concentration_profile.png"),
+    title="Concentrations Required for Desired Effects (Emax Model)",
+    filename=str(FIGURES_DIR / "effect_targets_exploration.png"),
     target_points=target_points,
 )
 

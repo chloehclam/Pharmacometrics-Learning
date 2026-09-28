@@ -168,7 +168,7 @@ def plot_effect_time(
         )
 
     ax.set_xlabel("Time (hr)")
-    ax.set_ylabel("Effect")
+    ax.set_ylabel("Effect (AU)")
     ax.set_title(title)
 
     if labels is not None:

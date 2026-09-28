@@ -46,7 +46,7 @@ for ic50 in inhibitory_ec50_values:
 # Plot the effect-concentration profiles for different EC50 values
 plot_effect_concentration(
     dfs_inhibitory_ec50,
-    labels=[f"IC50 = {ic50}" for ic50 in inhibitory_ec50_values],
+    labels=[f"IC50 = {ic50} mg/L" for ic50 in inhibitory_ec50_values],
     title="Effect-Concentration Profiles for Different Inhibitory EC50 Values",
     filename=str(FIGURES_DIR / "inhibitory_ec50_comparison.png")
 )

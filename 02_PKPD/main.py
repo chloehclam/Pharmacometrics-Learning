@@ -38,7 +38,7 @@ df["Effect"] = effect_ec50
 plot_effect_concentration(
     df,
     title="Effect-Concentration Profile",
-    filename=str(FIGURES_DIR / "effect_concentration_profile.png")
+    filename=str(FIGURES_DIR / "effect_conc_profile.png")
 )
 
 
@@ -68,7 +68,7 @@ df["Effect"] = effect_i
 plot_effect_concentration(
     df,
     title="Inhibitory Effect-Concentration Profile",
-    filename=str(FIGURES_DIR / "inhibitory_effect_concentration_profile.png")
+    filename=str(FIGURES_DIR / "inhibitory_effect_conc_profile.png")
 )
 
 
@@ -98,8 +98,8 @@ df["Effect"] = effect_ec50
 # Plot the effect-time profile
 plot_effect_time(
     df,
-    title="Effect-Time Profile of Oral Dose",
-    filename=str(FIGURES_DIR / "effect_time_profile.png")
+    title="Effect-Time Profile of a Single Oral Dose",
+    filename=str(FIGURES_DIR / "oral_effect_time_profile.png")
 )
 
 

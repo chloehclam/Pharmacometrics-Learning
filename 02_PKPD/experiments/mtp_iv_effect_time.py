@@ -37,7 +37,7 @@ df["Effect"] = emax_model(
 # Plot the effect-time profile for the multiple IV doses
 plot_effect_time(
     df,
-    title="Effect-Time Profile for Multiple IV Doses",
+    title="Effect-Time Profile for Multiple IV Boluses",
     filename=str(FIGURES_DIR / "multiple_iv_effect_time.png")
 )
 

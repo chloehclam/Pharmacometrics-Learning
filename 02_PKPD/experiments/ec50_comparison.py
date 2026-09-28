@@ -45,7 +45,7 @@ for ec50 in ec50_values:
 # Plot the effect-concentration profiles for different EC50 values
 plot_effect_concentration(
     dfs_ec50,
-    labels=[f"EC50 = {ec50}" for ec50 in ec50_values],
+    labels=[f"EC50 = {ec50} mg/L" for ec50 in ec50_values],
     title="Effect-Concentration Profiles for Different EC50 Values",
     filename=str(FIGURES_DIR / "ec50_comparison.png")
 )
