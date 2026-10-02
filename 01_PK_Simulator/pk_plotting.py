@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np  
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -7,6 +8,8 @@ import matplotlib.pyplot as plt
 def plot_pk(
     dfs,
     labels=None,
+    xlabel="Time (hr)",
+    ylabel="Concentration (mg/L)",
     title="PK profile",
     filename=None,
     show=False
@@ -62,14 +65,14 @@ def plot_pk(
 
         # Plot the concentration-time profile
         plt.plot(
-            df["Time (hr)"],
-            df["Concentration (mg/L)"],
+            df[xlabel],
+            df[ylabel],
             label=label
         )
 
     # Set plot labels and title
-    plt.xlabel("Time (hr)")
-    plt.ylabel("Concentration (mg/L)")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.title(title)
 
     # Add legend if labels are provided

@@ -1,4 +1,3 @@
-# Import necessary modules and functions
 from pathlib import Path
 import sys
 
@@ -8,8 +7,11 @@ from pk_simulator import simulate_multiple_iv
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
 
+# ============================================================================
 # Compare the concentration-time profiles for different dosing intervals
-dose_intervals = [2, 4, 8]
+# ============================================================================
+
+dose_intervals = [2, 4, 8] # List of dosing intervals to compare
 
 dfs_dose_interval = [] # List to store the dataframes for different dosing intervals
 

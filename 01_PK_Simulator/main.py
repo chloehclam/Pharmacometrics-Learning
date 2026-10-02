@@ -5,10 +5,13 @@ from pk_simulator import (
     simulate_multiple_iv,
     simulate_inf_ld,
     simulate_iv_infusion,
+    simulate_two_cmt,
 )
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
 from pathlib import Path
+
+import numpy as np
 
 FIGURES_DIR = Path(__file__).resolve().parent / "figures"
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
@@ -163,4 +166,31 @@ plot_pk(
     labels=["Loading dose + infusion", "Infusion", "Loading dose"],
     title="IV infusion with loading dose",
     filename=str(FIGURES_DIR / "infusion_loading_dose.png")
+)
+
+
+#============================================================================
+# Example 6: Two-Compartment Model Simulation
+#============================================================================
+
+df_tc = simulate_two_cmt(
+    dose=100,
+    vd1=10,
+    vd2=50,
+    q=10,
+    cl=1,
+    duration=24,
+    interval=0.1
+)
+
+cmax_tc, tmax_tc, auc_tc = analyse_pk(df_tc)
+
+df_tc["log(Concentration Central (mg/L))"] = np.log(df_tc["Concentration Central (mg/L)"])
+
+plot_pk(
+    df_tc,
+    title="Two-Compartment Model Simulation",
+    xlabel="Time (hr)",
+    ylabel="log(Concentration Central (mg/L))",
+    filename=str( FIGURES_DIR / "two_cmt_iv_bolus.png")
 )

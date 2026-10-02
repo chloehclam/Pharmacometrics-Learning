@@ -1,4 +1,3 @@
-# Import necessary modules and functions
 from pathlib import Path
 import sys
 
@@ -8,9 +7,11 @@ from pk_simulator import simulate_multiple_iv
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
 
-
+# ============================================================================
 # Compare the concentration-time profiles for different half-life values
-half_lives = [2, 4, 8]
+# ============================================================================
+
+half_lives = [2, 4, 8] # List of half-life values to compare
 
 dfs_half_life = [] # List to store the dataframes for different half-life values
 

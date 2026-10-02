@@ -1,4 +1,3 @@
-# Import necessary modules and functions
 from pathlib import Path
 import sys
 
@@ -8,9 +7,11 @@ from pk_simulator import simulate_oral
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
 
-
+# ===========================================================================
 # Compare the concentration-time profiles for different ka values
-ka_values = [5.0, 1.2, 0.5]
+# ===========================================================================
+
+ka_values = [5.0, 1.2, 0.5] # List of absorption rate constants (ka) to compare
 
 dfs_ka = [] # List to store the dataframes for different ka values
 

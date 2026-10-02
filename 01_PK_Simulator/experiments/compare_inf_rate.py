@@ -1,4 +1,3 @@
-# Import necessary modules and functions
 from pathlib import Path
 import sys
 
@@ -8,8 +7,11 @@ from pk_simulator import simulate_iv_infusion
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
 
+# ============================================================================
 # Compare the concentration-time profiles for different infusion rates
-inf_rates = [5, 10, 20]
+# ============================================================================
+
+inf_rates = [5, 10, 20] # List of infusion rates to compare
 
 dfs_iv_inf = [] # List to store the dataframes for different infusion rates
 

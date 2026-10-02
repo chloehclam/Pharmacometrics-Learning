@@ -1,4 +1,3 @@
-# Import necessary modules and functions
 from pathlib import Path
 import sys
 
@@ -8,12 +7,13 @@ from pk_simulator import simulate_iv_bolus, simulate_iv_infusion
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
 
-'''
-Compare the concentration-time profiles for IV bolus and IV infusion administration
-'''
 # ==============================================================================
+# Compare the concentration-time profiles for IV bolus and IV infusion administration
+# ==============================================================================
+
+# =============================================================================
 # IV Bolus
-# ==============================================================================
+# =============================================================================
 
 # Simulate IV bolus administration
 df_bolus = simulate_iv_bolus(

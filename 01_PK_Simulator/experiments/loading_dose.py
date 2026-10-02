@@ -1,4 +1,3 @@
-# Import necessary modules and functions
 from pathlib import Path
 import sys
 
@@ -7,6 +6,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pk_simulator import simulate_inf_ld
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
+
+# =============================================================================
+# Compare the concentration-time profiles for IV infusion with loading dose
+# =============================================================================
 
 # Simulate IV infusion with self-defined loading dose (half of the maintenance dose)
 df_inf_ld, df_inf, df_ld, css = simulate_inf_ld(

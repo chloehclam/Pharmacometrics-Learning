@@ -1,4 +1,3 @@
-# Import necessary modules and functions
 from pathlib import Path
 import sys
 
@@ -8,9 +7,11 @@ from pk_simulator import simulate_oral
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
 
-
+#=============================================================================
 # Compare the concentration-time profiles for different clearance values
-cl_values = [1, 2, 4]
+#=============================================================================
+
+cl_values = [1, 2, 4] # List of clearance values to compare
 
 dfs_cl = [] # List to store the dataframes for different clearance values
 

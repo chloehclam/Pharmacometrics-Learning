@@ -427,3 +427,207 @@ def simulate_inf_ld(
 
     # Return the combined profile, individual profiles, and steady-state concentration
     return df_overall, df_inf, df_loading, css
+
+
+
+#===========================================================================
+# Two-Compartment Model Simulation
+#===========================================================================
+
+def two_cmt_ode(
+    amounts,
+    vd1,
+    vd2,
+    q,
+    cl
+):
+    '''
+    Return central and peripheral compartment amount derivatives.
+
+    Parameters
+    ----------
+    amounts : tuple
+        Current amounts in the central and peripheral compartments (mg).
+    vd1 : float
+        Volume of distribution for the central compartment in L.
+    vd2 : float
+        Volume of distribution for the peripheral compartment in L.
+    q : float
+        Inter-compartmental clearance in L/hr.
+    cl : float
+        Clearance from the central compartment in L/hr.
+
+    Returns
+    -------
+    numpy.ndarray
+        Derivatives of the amounts in the central and peripheral compartments.
+    '''
+
+    # Unpack the amounts for central and peripheral compartments
+    amount_central, amount_peripheral = amounts
+
+    # Calculate the rate constants for distribution and elimination
+    k12 = q / vd1
+    k21 = q / vd2
+    k10 = cl / vd1
+
+    # Define the system of differential equations for the two-compartment model
+    d_central = - (k12 + k10) * amount_central + k21 * amount_peripheral 
+    d_peripheral = k12 * amount_central - k21 * amount_peripheral
+
+    # Create a DataFrame to store the time and concentration data
+    da_dt = np.array([d_central, d_peripheral])
+
+    return da_dt
+
+
+def two_cmt_solver(
+    amounts,
+    vd1,
+    vd2,
+    q,
+    cl,
+    duration=24,
+    interval=0.1
+):
+    '''
+    Solve the two-compartment IV bolus model using numerical integration.
+
+    Parameters
+    ----------
+    amounts : tuple
+        Initial amounts in the central and peripheral compartments (mg).
+    vd1 : float
+        Volume of distribution for the central compartment in L.
+    vd2 : float
+        Volume of distribution for the peripheral compartment in L.
+    q : float
+        Inter-compartmental clearance in L/hr.
+    cl : float
+        Clearance from the central compartment in L/hr.
+    duration : float, optional
+        Total simulation time in hours. Defaults to 24.
+    interval : float, optional
+        Time between simulated samples in hours. Defaults to 0.1.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Concentration-time data with ``Time (hr)``,
+        ``Concentration Central (mg/L)``,
+        ``Concentration Peripheral (mg/L)``, and 
+        ``Concentration (mg/L)`` columns.
+
+    '''
+    # Generate time points for simulation
+    time = np.arange(0, duration + interval, interval)
+
+    # Initialize arrays to store the amounts in each compartment
+    amount_central = np.zeros_like(time)
+    amount_peripheral = np.zeros_like(time)
+    amount_total = np.zeros_like(time)
+
+    # Set initial conditions
+    amount_central[0] = amounts[0]
+    amount_peripheral[0] = amounts[1]
+    amount_total[0] = amounts[0] + amounts[1]
+
+    # Perform numerical integration using Euler's method
+    for i in range(1, len(time)):
+        dt = time[i] - time[i - 1]
+
+        da_dt = two_cmt_ode(
+            amounts=(amount_central[i - 1], amount_peripheral[i - 1]),
+            vd1=vd1,
+            vd2=vd2,
+            q=q,
+            cl=cl,
+        )
+
+        amount_central[i] = amount_central[i - 1] + da_dt[0] * dt
+        amount_peripheral[i] = amount_peripheral[i - 1] + da_dt[1] * dt
+        amount_total[i] = amount_central[i] + amount_peripheral[i]
+
+    # Calculate concentrations in each compartment
+    concentration_central = amount_central / vd1
+    concentration_peripheral = amount_peripheral / vd2
+    concentration_total = amount_total / (vd1 + vd2)
+
+    # Create a DataFrame to store the time and concentration data
+    data = {
+        "Time (hr)": time,
+        "Concentration Central (mg/L)": concentration_central,
+        "Concentration Peripheral (mg/L)": concentration_peripheral,
+        "Concentration (mg/L)": concentration_total
+    }
+
+    df = pd.DataFrame(data)
+
+    return df
+
+
+def simulate_two_cmt(
+    dose,
+    vd1,
+    vd2,
+    q,
+    cl,
+    duration=24,
+    interval=0.1
+):
+    '''
+    Simulate a two-compartment IV bolus model.
+
+    Parameters
+    ----------
+    dose : float
+        Drug dose in mg.
+    vd1 : float
+        Volume of distribution for the central compartment in L.
+    vd2 : float
+        Volume of distribution for the peripheral compartment in L.
+    q : float
+        Inter-compartmental clearance in L/hr.
+    cl : float
+        Clearance from the central compartment in L/hr.
+    duration : float, optional
+        Total simulation time in hours. Defaults to 24.
+    interval : float, optional
+        Time between simulated samples in hours. Defaults to 0.1.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Concentration-time data with ``Time (hr)``, 
+        ``Concentration Central (mg/L)``,
+        ``Concentration Peripheral (mg/L)``, and
+        ``Concentration (mg/L)`` columns.
+    ''' 
+
+    # Validate input parameters
+    check_parameters(
+        dose=dose,
+        vd1=vd1,
+        vd2=vd2,
+        q=q,
+        cl=cl,
+        duration=duration,
+        interval=interval
+    )
+
+    # Calculate initial amounts in the central and peripheral compartments
+    amount_central = dose
+    amount_peripheral = 0
+
+    # Solve the two-compartment model using the solver function
+    df = two_cmt_solver(
+        amounts=(amount_central, amount_peripheral),
+        vd1=vd1,
+        vd2=vd2,
+        q=q,
+        cl=cl,
+        duration=duration,
+        interval=interval
+    )
+
+    return df

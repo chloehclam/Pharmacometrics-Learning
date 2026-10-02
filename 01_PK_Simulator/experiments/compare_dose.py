@@ -1,8 +1,3 @@
-doses = [50, 100, 200]
-
-dfs_dose = []
-
-# Import necessary modules and functions
 from pathlib import Path
 import sys
 
@@ -12,8 +7,15 @@ from pk_simulator import simulate_multiple_iv
 from pk_analysis import analyse_pk
 from pk_plotting import plot_pk
 
-
+# ============================================================================
 # Compare the concentration-time profiles for different doses
+# ============================================================================
+
+doses = [50, 100, 200] # List of doses to compare
+
+dfs_dose = [] # List to store the dataframes for different doses
+
+# Simulate multiple IV administrations for different doses
 for dose in doses:
     df = simulate_multiple_iv(
         dose=dose,
