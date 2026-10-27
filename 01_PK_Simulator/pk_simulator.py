@@ -53,9 +53,10 @@ def check_parameters(**kwargs):
 def simulate_iv_bolus(
     dose,
     vd,
-    half_life,
-    duration=24, 
-    interval=1,
+    cl=None,
+    half_life=None,
+    duration=24,
+    interval=0.1,
 ):
     """
     Simulate a one-compartment, single-dose IV bolus model.
@@ -66,6 +67,8 @@ def simulate_iv_bolus(
         Drug dose in mg.
     vd : float
         Volume of distribution in L.
+    cl : float
+        Clearance in L/hr.
     half_life : float
         Elimination half-life in hours.
     duration : float, optional
@@ -84,20 +87,20 @@ def simulate_iv_bolus(
     ValueError
         If a validated parameter is outside its allowed range.
     """
-    # Check the validity of input parameters
+    if (cl is None) == (half_life is None):
+        raise ValueError("Provide exactly one of 'cl' or 'half_life'.")
+
     check_parameters(
         dose=dose,
         vd=vd,
+        cl=cl,
         half_life=half_life,
         duration=duration,
         interval=interval,
     )
 
-    # Calculate initial concentration and elimination rate constant
-    c0 = dose/vd 
-
-    # Calculate elimination rate constant (k) using half-life
-    k = np.log(2) / half_life
+    k = cl / vd if cl is not None else np.log(2) / half_life
+    c0 = dose / vd
 
     # Generate time points for simulation
     time = np.arange(0, duration + interval, interval)
@@ -118,12 +121,12 @@ def simulate_iv_bolus(
 
 def simulate_oral(
     dose,
-    F, 
+    f, 
     vd,
     ka,
     cl,
     duration=24,
-    interval=1,
+    interval=0.1,
 ):
     '''
     Simulate a one-compartment oral administration model.
@@ -132,7 +135,7 @@ def simulate_oral(
     ----------
     dose : float
         Drug dose in mg.
-    F : float
+    f : float
         Bioavailability as a fraction between 0 and 1.
     vd : float
         Volume of distribution in L.
@@ -163,7 +166,7 @@ def simulate_oral(
         vd=vd,
         duration=duration,
         interval=interval,
-        F=F,
+        f=f,
         ka=ka,
         cl=cl,
     )
@@ -174,7 +177,7 @@ def simulate_oral(
     time = np.arange(0, duration + interval, interval)
 
     # Calculate the concentration at each time point using the one-compartment oral administration model
-    constant = F * dose * ka / (vd * (ka - k))
+    constant = f * dose * ka / (vd * (ka - k))
 
     concentration = constant * (np.exp(-k * time) - np.exp  (-ka * time))
 
@@ -192,10 +195,11 @@ def simulate_oral(
 def simulate_multiple_iv(
     dose,
     vd,
-    half_life,
+    cl=None,
+    half_life=None,
     duration=24,
     dose_interval=4,
-    simulation_interval=0.1,     
+    simulation_interval=0.1,
 ):
     '''
     Simulate repeated IV bolus doses using a one-compartment model.
@@ -206,6 +210,8 @@ def simulate_multiple_iv(
         Amount administered at each dose, in mg.
     vd : float
         Volume of distribution in L.
+    cl : float
+        Clearance in L/hr.
     half_life : float
         Elimination half-life in hours.
     duration : float, optional
@@ -230,16 +236,15 @@ def simulate_multiple_iv(
     check_parameters(
         dose=dose,
         vd=vd,
+        cl=cl,
         half_life=half_life,
         duration=duration,
         dose_interval=dose_interval,
         simulation_interval=simulation_interval,
     )
 
-    # Calculate initial concentration and elimination rate constant
-    c0 = dose/vd
-
-    k = np.log(2) / half_life
+    c0 = dose / vd
+    k = cl / vd if cl is not None else np.log(2) / half_life
 
     # Generate time points for simulation
     time = np.arange(0, duration + simulation_interval, simulation_interval)

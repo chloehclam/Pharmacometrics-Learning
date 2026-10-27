@@ -79,7 +79,7 @@ plot_effect_concentration(
 # Simulate oral dose to get concentration-time profile
 df = simulate_oral(
     dose=100,
-    F=0.8,
+    f=0.8,
     vd=10,
     ka=1.2,
     cl=2

@@ -19,7 +19,7 @@ dfs_ka = [] # List to store the dataframes for different ka values
 for ka in ka_values:
     df = simulate_oral(
         dose=100,
-        F=0.8,
+        f=0.8,
         vd=10,
         ka=ka,
         cl=2,

@@ -7,22 +7,41 @@ import matplotlib.pyplot as plt
 # Plot the PK profile for the simulated data
 def plot_pk(
     dfs,
+    xscale=None,
+    yscale=None,
     labels=None,
     xlabel="Time (hr)",
     ylabel="Concentration (mg/L)",
+    xaxis=None,
+    yaxis=None,
+    styles=None,
     title="PK profile",
     filename=None,
     show=False
 ):
     '''
     Plot the concentration-time profile for the simulated data.
-    
+
     Parameters
     ----------
     dfs : pandas.DataFrame or list of pandas.DataFrame
         DataFrame(s) containing Time and Concentration.
+    xscale: str, optional
+        Scale of x-axis.
+    yscale: str, optional.
+        Scale of y-axis.
     labels : list of str, optional
         Labels for the different concentration-time profiles.
+    xlabel: str, optional.
+        Name of the x-column of the DataFrame.
+    ylabel: str, optional.
+        Name of the y-column of the DataFrame.
+    xaxis: str, optional.
+        Title of the x-axis.
+    yaxis: str, optional.
+        Title of the y-axis.
+    styles: str, optional.
+        Style of the plot.
     title : str, optional
         Title of the plot.
     filename : str, optional
@@ -63,17 +82,42 @@ def plot_pk(
         # Use the corresponding label if provided, otherwise use None
         label = labels[i] if labels else None
 
+        # Use the corresponding style if provided, otherwise use line plot
+        style = styles[i] if styles else None
+
         # Plot the concentration-time profile
-        plt.plot(
-            df[xlabel],
-            df[ylabel],
-            label=label
-        )
+        if style == "points":
+            plt.scatter(
+                df[xlabel],
+                df[ylabel],
+                label=label
+            )
+
+        else:
+            plt.plot(
+                df[xlabel],
+                df[ylabel],
+                label=label
+            )
 
     # Set plot labels and title
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    if xaxis:
+        plt.xlabel(xaxis)
+    else:
+        plt.xlabel(xlabel)
+
+    if yaxis:
+        plt.ylabel(yaxis)
+    else:
+        plt.ylabel(ylabel)
+   
     plt.title(title)
+
+    # Adjust scale if scale is provided
+    if xscale:
+        plt.xscale(xscale)
+    if yscale:
+        plt.yscale(yscale)
 
     # Add legend if labels are provided
     if labels:

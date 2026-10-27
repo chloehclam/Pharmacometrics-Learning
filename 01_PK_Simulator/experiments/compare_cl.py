@@ -18,13 +18,13 @@ dfs_cl = [] # List to store the dataframes for different clearance values
 # Simulate oral administration for different clearance values
 for cl in cl_values:
     df = simulate_oral(
-            dose = 100,
-            F = 0.8,
-            vd = 10,
-            ka = 1.2,
-            cl = cl,
-            duration = 24,
-            interval = 0.1,
+            dose=100,
+            f=0.8,
+            vd=10,
+            ka=1.2,
+            cl=cl,
+            duration=24,
+            interval=0.1,
         )
 
     dfs_cl.append(df) # Append the dataframe to the list

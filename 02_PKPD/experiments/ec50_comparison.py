@@ -1,4 +1,3 @@
-# import necessary libraries
 from pathlib import Path
 import sys
 

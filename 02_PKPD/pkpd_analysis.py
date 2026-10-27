@@ -1,8 +1,8 @@
 # import necessary libraries
 import numpy as np
 
-
-"""
+def concentration_for_effect(effect, emax, ec50, e0):
+    """
     Calculate the concentration required to produce a desired effect using
     the Emax model.
 
@@ -36,13 +36,11 @@ import numpy as np
     current function accepts that boundary in its validation, but its
     calculation divides by zero there.
     """
+    # Ensure that the desired effect is within the achievable range
+    if np.any(effect < e0) or np.any(effect > emax + e0):
+        raise ValueError("Desired effect must be between e0 and emax + e0.")
 
-def concentration_for_effect(effect, emax, ec50, e0):
-        # Ensure that the desired effect is within the achievable range
-        if np.any(effect < e0) or np.any(effect > emax + e0):
-            raise ValueError("Desired effect must be between e0 and emax + e0.")
+    # Calculate the required concentration using the rearranged Emax equation
+    concentration = (ec50 * (effect - e0)) / (emax + e0 - effect)
 
-        # Calculate the required concentration using the rearranged Emax equation
-        concentration = (ec50 * (effect - e0)) / (emax + e0 - effect)
-
-        return concentration
+    return concentration
