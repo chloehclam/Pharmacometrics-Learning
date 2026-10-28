@@ -37,8 +37,9 @@ df_true_sample = sample_at_time(
 )
 
 # Add noise to sampled concentration
-df_sample = add_noise(df_true_sample)
+df_sample = add_noise(df_true_sample, col="Concentration Central (mg/L)")
 
+# Define a two-compartmental iv bolus model
 def two_cmt_iv_bolus(t, vd1, vd2, q, cl, dose=100):
     df_two_cmt = simulate_two_cmt(
         dose=dose,
@@ -50,15 +51,17 @@ def two_cmt_iv_bolus(t, vd1, vd2, q, cl, dose=100):
 
     df_two_cmt_sample = df_two_cmt.loc[df_two_cmt["Time (hr)"].isin(t)].copy()
 
-    return df_two_cmt_sample["Concentration (mg/L)"]
+    return df_two_cmt_sample["Concentration Central (mg/L)"]
 
 model_two_cmt = lambda t, vd1, vd2, q, cl: two_cmt_iv_bolus(t, vd1, vd2, q, cl,)
 
+# Estimate the PK parameters
 popt, pcov = fitting(
     df=df_sample,
     model=model_two_cmt,
     p0=(30, 20, 5, 10),
     bounds=([0, 0, 0, 0], [np.inf, np.inf, np.inf, np.inf]),
+    ycol="Concentration Central (mg/L)"
 )
 
 se = np.sqrt(np.diag(pcov))

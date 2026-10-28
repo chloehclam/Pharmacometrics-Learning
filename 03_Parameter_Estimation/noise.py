@@ -2,7 +2,11 @@ import numpy as np
 
 _DEFAULT_RNG = np.random.default_rng(42) 
 
-def add_noise(df, cv=0.1, rng=None):
+def add_noise(
+        df, 
+        col="Concentration (mg/L)", 
+        cv=0.1, 
+        rng=None):
     """
     Add Gaussian noise to the concentration data in the DataFrame.
 
@@ -10,6 +14,8 @@ def add_noise(df, cv=0.1, rng=None):
     ----------
     df : pandas.DataFrame
         DataFrame containing Time and Concentration columns.
+    col: str, optional
+        Name of the column to add noise to.
     cv : float, optional
         Coefficient of variation for the Gaussian noise to be added. Default is 0.1.
     rng : numpy.random.Generator, optional
@@ -27,10 +33,10 @@ def add_noise(df, cv=0.1, rng=None):
         rng = _DEFAULT_RNG
 
     # Calculate the noise level based on the coefficient of variation and the concentration values
-    noise_level = cv * df["Concentration (mg/L)"]
+    noise_level = cv * df[col]
 
     # Add Gaussian noise to the concentration values
-    noisy_df["Concentration (mg/L)"] += rng.normal(
+    noisy_df[col] += rng.normal(
         0, noise_level, size=len(df)
     )
     
