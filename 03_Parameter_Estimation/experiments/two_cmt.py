@@ -34,6 +34,7 @@ sample_times = [0.2, 0.5, 1, 2, 4, 8, 12, 24]
 df_true_sample = sample_at_time(
     df_true,
     sample_times=sample_times,
+    conc="Concentration Central (mg/L)"
 )
 
 # Add noise to sampled concentration
@@ -49,9 +50,13 @@ def two_cmt_iv_bolus(t, vd1, vd2, q, cl, dose=100):
         cl=cl,
     )
 
-    df_two_cmt_sample = df_two_cmt.loc[df_two_cmt["Time (hr)"].isin(t)].copy()
+    df_two_cmt_sample = sample_at_time(
+        df_two_cmt,
+        sample_times=t,
+        conc="Concentration Central (mg/L)"
+    )
 
-    return df_two_cmt_sample["Concentration Central (mg/L)"]
+    return df_two_cmt_sample["Concentration Central (mg/L)"].to_numpy()
 
 model_two_cmt = lambda t, vd1, vd2, q, cl: two_cmt_iv_bolus(t, vd1, vd2, q, cl,)
 
@@ -71,4 +76,3 @@ print(f"Estimated central Vd: {popt[0]:.3f} \u00b1 {se[0]:.3f}  True central Vd:
 print(f"Estimated peripheral Vd: {popt[1]:.3f} \u00b1 {se[1]:.3f}   True peripheral Vd: 20")
 print(f"Estimated intercompartmental clearance: {popt[2]:.3f} \u00b1 {se[2]:.3f}  True Q: 2")
 print(f"Estimated clearance: {popt[3]:.3f} \u00b1 {se[3]:.3f}   True cl: 3")
-
