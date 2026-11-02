@@ -76,3 +76,8 @@ print(f"Estimated central Vd: {popt[0]:.3f} \u00b1 {se[0]:.3f}  True central Vd:
 print(f"Estimated peripheral Vd: {popt[1]:.3f} \u00b1 {se[1]:.3f}   True peripheral Vd: 20")
 print(f"Estimated intercompartmental clearance: {popt[2]:.3f} \u00b1 {se[2]:.3f}  True Q: 2")
 print(f"Estimated clearance: {popt[3]:.3f} \u00b1 {se[3]:.3f}   True cl: 3")
+
+print(f"Relative error of central Vd: {(popt[0] - 10) / 10 * 100:+.3f}%")
+print(f"Relative error of peripheral Vd: {(popt[1] - 20) / 20 * 100:+.3f}%")
+print(f"Relative error of intercompartmental clearance: {(popt[2] - 2) / 2 * 100:+.3f}%")
+print(f"Relative error of clearance: {(popt[3] - 3) / 3 * 100:+.3f}%")
