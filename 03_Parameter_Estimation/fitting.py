@@ -55,9 +55,9 @@ def fitting(
         raise ValueError("Concentrations must be positive.")
 
     if weighting == "none":
-        popt, pcov = optimize.curve_fit(model, t, y, p0=p0, bounds=bounds)
+        popt, pcov = optimize.curve_fit(model, t, y, p0=p0, bounds=bounds, maxfev=10000)
 
     else:
-        popt, pcov = optimize.curve_fit(model, t, y, p0=p0, bounds=bounds, sigma=y)
+        popt, pcov = optimize.curve_fit(model, t, y, p0=p0, bounds=bounds, sigma=y, maxfev=10000)
 
     return popt, pcov

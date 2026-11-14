@@ -1,7 +1,6 @@
 from pathlib import Path
 import sys
 import numpy as np
-import pandas as pd
 
 # Locate the project folders relative to this script
 project_dir = Path(__file__).resolve().parents[1]  # 03_Parameter_Estimation
@@ -12,6 +11,7 @@ sys.path.insert(0, str(project_dir))
 sys.path.insert(0, str(simulator_dir))
 
 from pk_simulator import simulate_two_cmt
+from pk_plotting import plot_pk
 from noise import add_noise
 from sampling import sample_at_time
 from fitting import fitting
@@ -25,20 +25,8 @@ df_true = simulate_two_cmt(
     vd1=10, # L
     vd2=20, # L
     q=2, # L/hr
-    cl=3, # L/hr 
+    cl=3, # L/hr
 )
-
-sample_times = [0.2, 0.5, 1, 2, 4, 8, 12, 24]
-
-# Extract concentrations at sampled times
-df_true_sample = sample_at_time(
-    df_true,
-    sample_times=sample_times,
-    conc="Concentration Central (mg/L)"
-)
-
-# Add noise to sampled concentration
-df_sample = add_noise(df_true_sample, col="Concentration Central (mg/L)")
 
 # Define a two-compartmental iv bolus model
 def two_cmt_iv_bolus(t, vd1, vd2, q, cl, dose=100):
@@ -58,26 +46,69 @@ def two_cmt_iv_bolus(t, vd1, vd2, q, cl, dose=100):
 
     return df_two_cmt_sample["Concentration Central (mg/L)"].to_numpy()
 
-model_two_cmt = lambda t, vd1, vd2, q, cl: two_cmt_iv_bolus(t, vd1, vd2, q, cl,)
 
-# Estimate the PK parameters
-popt, pcov = fitting(
-    df=df_sample,
-    model=model_two_cmt,
-    p0=(30, 20, 5, 10),
-    bounds=([0, 0, 0, 0], [np.inf, np.inf, np.inf, np.inf]),
-    ycol="Concentration Central (mg/L)"
-)
+if __name__ == "__main__":
+    sample_times = [0.2, 0.5, 1, 2, 4, 8, 12, 24]
 
-se = np.sqrt(np.diag(pcov))
+    # Extract concentrations at sampled times
+    df_true_sample = sample_at_time(
+        df_true,
+        sample_times=sample_times,
+        conc="Concentration Central (mg/L)"
+    )
 
-print("Two-compartmental IV bolus parameter estimation:")
-print(f"Estimated central Vd: {popt[0]:.3f} \u00b1 {se[0]:.3f}  True central Vd: 10")
-print(f"Estimated peripheral Vd: {popt[1]:.3f} \u00b1 {se[1]:.3f}   True peripheral Vd: 20")
-print(f"Estimated intercompartmental clearance: {popt[2]:.3f} \u00b1 {se[2]:.3f}  True Q: 2")
-print(f"Estimated clearance: {popt[3]:.3f} \u00b1 {se[3]:.3f}   True cl: 3")
+    # Add noise to sampled concentration
+    df_sample = add_noise(df_true_sample, col="Concentration Central (mg/L)")
 
-print(f"Relative error of central Vd: {(popt[0] - 10) / 10 * 100:+.3f}%")
-print(f"Relative error of peripheral Vd: {(popt[1] - 20) / 20 * 100:+.3f}%")
-print(f"Relative error of intercompartmental clearance: {(popt[2] - 2) / 2 * 100:+.3f}%")
-print(f"Relative error of clearance: {(popt[3] - 3) / 3 * 100:+.3f}%")
+    model_two_cmt = lambda t, vd1, vd2, q, cl: two_cmt_iv_bolus(t, vd1, vd2, q, cl,)
+
+    # Estimate the PK parameters
+    popt, pcov = fitting(
+        df=df_sample,
+        model=model_two_cmt,
+        p0=(30, 20, 5, 10),
+        bounds=([0, 0, 0, 0], [np.inf, np.inf, np.inf, np.inf]),
+        ycol="Concentration Central (mg/L)"
+    )
+
+    se = np.sqrt(np.diag(pcov))
+
+    print("Two-compartmental IV bolus parameter estimation:")
+    print(f"Estimated central Vd: {popt[0]:.3f} \u00b1 {se[0]:.3f}  True central Vd: 10")
+    print(f"Estimated peripheral Vd: {popt[1]:.3f} \u00b1 {se[1]:.3f}   True peripheral Vd: 20")
+    print(f"Estimated intercompartmental clearance: {popt[2]:.3f} \u00b1 {se[2]:.3f}  True Q: 2")
+    print(f"Estimated clearance: {popt[3]:.3f} \u00b1 {se[3]:.3f}   True cl: 3")
+
+    print(f"Relative error of central Vd: {(popt[0] - 10) / 10 * 100:+.3f}%")
+    print(f"Relative error of peripheral Vd: {(popt[1] - 20) / 20 * 100:+.3f}%")
+    print(f"Relative error of intercompartmental clearance: {(popt[2] - 2) / 2 * 100:+.3f}%")
+    print(f"Relative error of clearance: {(popt[3] - 3) / 3 * 100:+.3f}%")
+
+
+    parameter_se = np.sqrt(np.diag(pcov))
+
+    correlation_matrix = pcov / np.outer(parameter_se, parameter_se)
+
+    print(correlation_matrix)
+
+    df_model = simulate_two_cmt(
+        dose=100,
+        vd1=popt[0],
+        vd2=popt[1],
+        q=popt[2],
+        cl=popt[3],
+    )
+
+    plot_pk(
+        [df_true, df_model, df_sample],
+        labels=["True", "Modeled", "Sampled"],
+        yscale="log",
+        xlabel="Time (hr)",
+        ylabel="Concentration Central (mg/L)",
+        styles=["line", "line", "points"],
+        title="Two-compartment IV bolus: fitted vs true concentrations",
+        filename=str(FIGURES_DIR /"fitting_two_cmt.png"),
+        show=False
+    )
+
+    pass

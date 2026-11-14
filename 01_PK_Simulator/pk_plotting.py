@@ -67,8 +67,6 @@ def plot_pk(
     for df in dfs:
         if not isinstance(df, pd.DataFrame):
             raise ValueError("Each item in dfs must be a pandas DataFrame.")
-        if "Time (hr)" not in df.columns or "Concentration (mg/L)" not in df.columns:
-            raise ValueError("Each DataFrame must contain 'Time (hr)' and 'Concentration (mg/L)' columns.")
 
     # Set up the plot
     plt.figure(figsize=(8, 5))
