@@ -68,6 +68,9 @@ def plot_pk(
         if not isinstance(df, pd.DataFrame):
             raise ValueError("Each item in dfs must be a pandas DataFrame.")
 
+        if xlabel not in df.columns or ylabel not in df.columns:
+            raise ValueError(f"Each DataFrame must contain the columns '{xlabel}' and '{ylabel}'.")
+
     # Set up the plot
     plt.figure(figsize=(8, 5))
 
