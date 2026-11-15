@@ -62,21 +62,24 @@ summary = {
         "mean_standard_errors": None,
         "bias": None,
         "empirical_se": None,
-        "rmse": None
+        "rmse": None,
+        "success_rate": None
     },
     "B": {
         "mean_estimates": None,
         "mean_standard_errors": None,
         "bias": None,
         "empirical_se": None,
-        "rmse": None
+        "rmse": None,
+        "success_rate": None
     },
     "C": {
         "mean_estimates": None,
         "mean_standard_errors": None,
         "bias": None,
         "empirical_se": None,
-        "rmse": None
+        "rmse": None,
+        "success_rate": None
     }
 }
 
@@ -132,6 +135,7 @@ for i, schedule in enumerate(schedules):
     bias = mean_estimates - np.array([10, 20, 2, 3])  # True values for vd1, vd2, q, cl
     empirical_se = np.std(results[schedule_key]["estimates"], axis=0)
     rmse = np.sqrt(np.mean((results[schedule_key]["estimates"] - np.array([10, 20, 2, 3]))**2, axis=0))
+    success_rate = np.mean(results[schedule_key]["success"])
 
     # Store the summary statistics in the summary dictionary
     summary[schedule_key]["mean_estimates"] = mean_estimates
@@ -139,6 +143,7 @@ for i, schedule in enumerate(schedules):
     summary[schedule_key]["bias"] = bias
     summary[schedule_key]["empirical_se"] = empirical_se
     summary[schedule_key]["rmse"] = rmse
+    summary[schedule_key]["success_rate"] = success_rate
 
 def format_array(values):
     return np.array2string(
@@ -154,3 +159,4 @@ for schedule_key in summary.keys():
     print(f"Bias: {format_array(summary[schedule_key]['bias'])}")
     print(f"Empirical SE: {format_array(summary[schedule_key]['empirical_se'])}")
     print(f"RMSE: {format_array(summary[schedule_key]['rmse'])}")
+    print(f"Success Rate: {summary[schedule_key]['success_rate']:.3f}")
